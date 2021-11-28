@@ -35,8 +35,8 @@ class User(models.Model):
     )
     gender = models.CharField(
         choices=(
-            ('Male', 'MALE'),
-            ('Female', 'FEMALE'),
+            ('M', 'MALE'),
+            ('F', 'FEMALE'),
         ),
         max_length=8
     )

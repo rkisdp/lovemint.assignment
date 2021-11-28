@@ -4,7 +4,8 @@ from user.models import User
 from django.utils import timezone
 from django.http import HttpResponse
 from django.views import View as APIView
-from user.serializers import UserSerializer
+from user.serializers import MultiUserSerializer, UserSerializer
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 
@@ -35,3 +36,19 @@ class UserCreateView(APIView):
             )
             body = UserSerializer.serializer(user_entity)
         return HttpResponse(json.dumps(body), content_type="application/json", status=status)
+
+
+class UserListView(APIView):
+    def get(self, request, **kwargs):
+        users_entity = User.objects.all()
+        page_size = request.GET.get('page_size', 10)
+        p = Paginator(users_entity, page_size)
+        page_number = request.GET.get('page', 1)
+        try:
+            page_obj = p.get_page(page_number)
+        except PageNotAnInteger:
+            page_obj = p.page(1)
+        except EmptyPage:
+            page_obj = p.page(p.num_pages)
+        user_serializer_data = MultiUserSerializer.serializer(page_obj, page_size, page_number)
+        return HttpResponse(json.dumps(user_serializer_data), content_type="application/json", status=200)
