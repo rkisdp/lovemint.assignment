@@ -1,3 +1,6 @@
+import json
+
+
 class MultiUserSerializer:
 
     @staticmethod
@@ -12,6 +15,9 @@ class MultiUserSerializer:
 class UserSerializer:
     @staticmethod
     def serializer(user):
+        locale = {}
+        if user.location:
+            locale = json.loads(user.location.geojson)
         return {
                 "id": user.id,
                 "name": user.name,
@@ -20,6 +26,6 @@ class UserSerializer:
                 "resized_image": str(user.resized_image),
                 "gender": user.gender,
                 "description_text": user.description_text,
-                "location": user.location,
+                "location": locale,
                 "timestamp": str(user.timestamp),
             }

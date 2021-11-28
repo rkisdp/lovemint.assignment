@@ -52,3 +52,17 @@ class UserListView(APIView):
             page_obj = p.page(p.num_pages)
         user_serializer_data = MultiUserSerializer.serializer(page_obj, page_size, page_number)
         return HttpResponse(json.dumps(user_serializer_data), content_type="application/json", status=200)
+
+
+class GetUserResizedImage(APIView):
+    def get(self, request, user_id, **kwargs):
+        try:
+            status = 200
+            user_entity = User.objects.get(id=user_id)
+            body = {
+                "resized_image": UserSerializer.serializer(user_entity).get('resized_image', {})
+            }
+        except User.DoesNotExist:
+            status = 400
+            body = {'message': 'user does not exist'}
+        return HttpResponse(json.dumps(body), content_type="application/json", status=status)
