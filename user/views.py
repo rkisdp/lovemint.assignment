@@ -60,7 +60,7 @@ class GetUserResizedImage(APIView):
             status = 200
             user_entity = User.objects.get(id=user_id)
             body = {
-                "resized_image": user_entity.resized_image.url
+                "resized_image": str(user_entity.resized_image.url)
             }
         except User.DoesNotExist:
             status = 400
